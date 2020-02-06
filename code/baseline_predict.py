@@ -35,10 +35,12 @@ def read_gt(path):
 if __name__ == '__main__':
     model_name = "baseline_unet_do_0.1_activation_ReLU_"
 
+    data_root = '../../../datasets/retina/DRIVE'
 
-    val_data = list(zip(sorted(glob('../input/DRIVE/test/images/*.tif')),
-                          sorted(glob('../input/DRIVE/test/2nd_manual/*.gif')),
-                        sorted(glob('../input/DRIVE/test/mask/*.gif'))))
+    val_data = list(zip(sorted(glob(os.path.join(data_root, 'test/images/*.tif'))),
+                          sorted(glob(os.path.join(data_root,
+                                                   'test/1st_manual/*.gif'))),
+                        sorted(glob(os.path.join(data_root, 'test/mask/*.gif')))))
 
     try:
         os.makedirs("../output/"+model_name+"test/", exist_ok=True)
@@ -94,7 +96,8 @@ if __name__ == '__main__':
 
             pred_ = 255.*(pred_ - np.min(pred_))/(np.max(pred_)-np.min(pred_))
 
-            image_base = image_path[0].split("/")[-1]
+            # image_base = image_path[0].split("/")[-1]
+            image_base = str(i+1) + '_' + '.png'
 
             cv2.imwrite("../output/"+model_name+"test/"+image_base, pred_)
 

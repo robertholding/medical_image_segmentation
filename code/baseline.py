@@ -1,4 +1,5 @@
 # part of this script was taken from https://github.com/jocicmarko/ultrasound-nerve-segmentation
+import os
 import argparse
 from glob import glob
 
@@ -77,7 +78,8 @@ def get_unet(do=0, activation=ReLU):
 
     model = Model(inputs=[inputs], outputs=[conv10])
 
-    model.compile(optimizer=Adam(lr=1e-3), loss=losses.binary_crossentropy, metrics=['accuracy'])
+    model.compile(optimizer=Adam(lr=1e-3),
+                  loss=losses.binary_crossentropy, metrics=['accuracy'])
 
 
     return model
@@ -148,8 +150,11 @@ if __name__ == '__main__':
 
     print("Model : %s"%model_name)
 
-    train_data = list(zip(sorted(glob('../input/DRIVE/training/images/*.tif')),
-                          sorted(glob('../input/DRIVE/training/1st_manual/*.gif'))))
+    data_root = '../../../datasets/retina/DRIVE'
+    train_data = list(zip(sorted(glob(os.path.join(data_root,
+                                                   'training/images/*.tif'))),
+                          sorted(glob(os.path.join(data_root,
+                                                   'training/1st_manual/*.gif')))))
 
     model = get_unet(do=args['dropout'], activation=activation)
 
@@ -158,8 +163,6 @@ if __name__ == '__main__':
         model.load_weights(file_path, by_name=True)
     except:
         pass
-
-
 
 
     history = model.fit_generator(gen(train_data, au=True), epochs=100, verbose=2,

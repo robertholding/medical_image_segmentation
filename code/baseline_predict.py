@@ -67,12 +67,14 @@ if __name__ == '__main__':
         pred = model.predict(imgs)
 
         pred_all = (pred)
+        print("raw pred: ", pred)
 
         pred = np.clip(pred, 0, 1)
 
         for i, image_path in enumerate(batch_files):
 
             pred_ = pred[i, :, :, 0]
+            print("raw pred:", pred_, pred_.shape)
 
             pred_ = resize(pred_, (584, 565))
 
@@ -94,12 +96,12 @@ if __name__ == '__main__':
             gt_list += gt_flat
             pred_list += pred_flat
 
-            pred_ = 255.*(pred_ - np.min(pred_))/(np.max(pred_)-np.min(pred_))
-
+            pred1_ = 255.*(pred_ - np.min(pred_))/(np.max(pred_)-np.min(pred_))
+            print("processed pred: ", pred_)
             # image_base = image_path[0].split("/")[-1]
             image_base = str(i+1) + '_' + '.png'
 
-            cv2.imwrite("../output/"+model_name+"test/"+image_base, pred_)
+            cv2.imwrite("../output/"+model_name+"test/"+image_base, pred1_)
 
     print(len(gt_list), len(pred_list))
     print("AUC ROC : ", roc_auc_score(gt_list, pred_list))
